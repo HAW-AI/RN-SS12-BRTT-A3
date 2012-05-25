@@ -60,4 +60,8 @@ public class Server {
 	public Map<Connection, String> getClients() {
 		return new HashMap<Connection, String>(this.clients);
 	}
+	
+	public boolean isIdentified(Connection con) {
+	    return clients.containsKey(con);
+	}
 }

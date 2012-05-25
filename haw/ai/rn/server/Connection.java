@@ -46,16 +46,21 @@ public class Connection implements Runnable {
 				}
 				else if (msg.toLowerCase().trim().startsWith("info")) {
 					// INFO        - Teilnehmerliste zurückschicken.
-					StringBuilder response = new StringBuilder();
-					Map<Connection, String> clients = server.getClients();
-					response.append("LIST");
-					response.append(String.format(" %d", clients.size()));
-					for (Map.Entry<Connection, String> e : clients.entrySet()) {
-					    String ip = e.getKey().clientAddress().toString();
-					    ip = ip.substring(ip.indexOf('/') + 1); // strip host name
-						response.append(String.format(" %s %s", ip, e.getValue()));
-					}
-					respond(response.toString());
+				    
+				    if (server.isIdentified(this)) {
+    					StringBuilder response = new StringBuilder();
+    					Map<Connection, String> clients = server.getClients();
+    					response.append("LIST");
+    					response.append(String.format(" %d", clients.size()));
+    					for (Map.Entry<Connection, String> e : clients.entrySet()) {
+    					    String ip = e.getKey().clientAddress().toString();
+    					    ip = ip.substring(ip.indexOf('/') + 1); // strip host name
+    						response.append(String.format(" %s %s", ip, e.getValue()));
+    					}
+    					respond(response.toString());
+				    } else {
+				        respond("ERROR not identified");
+				    }
 				}
 				else if (msg.toLowerCase().trim().equals("bye")) {
 					// BYE         - Abmelden
