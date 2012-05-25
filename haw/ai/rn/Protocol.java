@@ -5,4 +5,6 @@ public interface Protocol {
 	public static final int CLIENT_PORT = 50001;
 	public static final String MSG_DELIMITER = "\n";
 	public static final String NAME_PATTERN = "^[a-zA-Z]{1,20}$";
+    public static final int MAX_NAME_LEN = 20;
+    public static final int MAX_MSG_LEN = 60;
 }

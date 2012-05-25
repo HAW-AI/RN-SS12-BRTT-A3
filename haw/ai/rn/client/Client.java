@@ -3,22 +3,27 @@ package haw.ai.rn.client;
 import static haw.ai.rn.Protocol.*;
 
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Client {
     private String name;
     private Connection connection;
+    private DatagramSocket outSocket;
+    private MessageListener listener;
+    private boolean isConnected;
 
-    public Client(InetAddress serverAddr) throws IOException {
+    public Client(InetAddress serverAddr, MessageReceiver receiver) throws IOException {
         this.connection = new Connection(serverAddr);
+        this.outSocket = new DatagramSocket();
+        this.listener = new MessageListener(receiver);
+        this.isConnected = true;
+        
+        new Thread(listener).start();
     }
 
     public String getName() {
@@ -38,8 +43,14 @@ public class Client {
     public void disconnect() {
         String resp = connection.request("BYE");
         if (resp.equals("bye")) {
+            listener.stop();
             connection.close();
+            this.isConnected = false;
         }
+    }
+    
+    public boolean isConnected() {
+        return isConnected;
     }
     
     boolean isValidName(String name) {
@@ -79,5 +90,29 @@ public class Client {
         }
         
         return users;
+    }
+    
+    /**
+     * Send message to all the other chat clients.
+     * if msg.length() > 60, the message will be split into multiple parts
+     * 
+     * @param msg the msg
+     */
+    public void sendMessage(String msg) {
+        try {
+            for (int offs = 0; offs < msg.length(); offs += MAX_MSG_LEN) {
+                for (Map.Entry<String, InetAddress> e : getClients().entrySet()) {
+                    int len = Math.min(MAX_MSG_LEN, msg.length() - offs);
+                    String data = dataForMessage(getName(), msg.substring(offs, len));
+                    outSocket.send(new DatagramPacket(data.getBytes(), offs, data.length(), e.getValue(), CLIENT_PORT));
+                }
+            }
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
+    
+    public static String dataForMessage(String name, String msg) {
+        return String.format("%s: %s\n", name, msg.substring(0, Math.min(MAX_MSG_LEN, msg.length())));
     }
 }
