@@ -16,22 +16,20 @@ import java.net.SocketException;
  */
 public class MessageListener implements Runnable {
     private MessageReceiver receiver;
-    private boolean listening;
+    private DatagramSocket socket;
     
     public MessageListener(MessageReceiver receiver) {
         this.receiver = receiver;
     }
     
     public void stop() {
-        this.listening = false;
+        socket.close();
     }
     
     @Override
     public void run() {
-        this.listening = true;
-        
         try {
-            DatagramSocket socket = new DatagramSocket(CLIENT_PORT);
+            socket = new DatagramSocket(CLIENT_PORT);
             
             // calculate buffer size
             StringBuilder nameBuilder = new StringBuilder();
@@ -45,7 +43,7 @@ public class MessageListener implements Runnable {
             byte[] buf = longestPossibleData.getBytes();
             DatagramPacket p = new DatagramPacket(buf, buf.length);
             
-            while (listening) {
+            while (true) {
                 // clear the buffer
                 for (int i = 0; i < buf.length; ++i) { buf[i] = '\0'; }
                 
@@ -53,8 +51,8 @@ public class MessageListener implements Runnable {
                 receiver.receiveMessage(new String(p.getData()));
             }
         } catch (SocketException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            // socket closed
+            // everything's okay
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -41,12 +41,10 @@ public class Client {
     }
     
     public void disconnect() {
-        String resp = connection.request("BYE");
-        if (resp.equals("bye")) {
-            listener.stop();
-            connection.close();
-            this.isConnected = false;
-        }
+        connection.request("BYE");
+        listener.stop();
+        connection.close();
+        this.isConnected = false;
     }
     
     public boolean isConnected() {
