@@ -10,6 +10,7 @@ public class Application {
             InetAddress serverIp = InetAddress.getByName("localhost");
             Client client = new Client(serverIp);
             client.setName("hans");
+            System.out.println(client.getClients());
             Thread.sleep(2000);
             client.disconnect();
         } catch (Exception e) {

@@ -51,7 +51,9 @@ public class Connection implements Runnable {
 					response.append("LIST");
 					response.append(String.format(" %d", clients.size()));
 					for (Map.Entry<String, InetAddress> e : clients.entrySet()) {
-						response.append(String.format(" %s %s", e.getValue(), e.getKey()));
+					    String ip = e.getValue().toString();
+					    ip = ip.substring(ip.indexOf('/') + 1); // strip host name
+						response.append(String.format(" %s %s", ip, e.getKey()));
 					}
 					respond(response.toString());
 				}
