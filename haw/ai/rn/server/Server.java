@@ -11,7 +11,9 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Server {
 	private final ServerSocket socket;
 	private final ThreadPoolExecutor threads = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
-	private Map<String, InetAddress> clients = new HashMap<String, InetAddress>();
+	
+	// Connection:String instead of to String:InetAddress to be able to identify client name when the Connection dies unexpectedly 
+	private Map<Connection, String> clients = new HashMap<Connection, String>();
 	
 	public Server(Integer port) throws IOException {
 		socket = new ServerSocket(port);
@@ -30,22 +32,26 @@ public class Server {
 		}		
 	}
 
-	public boolean addClient(String name, InetAddress inetAddress) {
+	public boolean addClient(String name, Connection connection) {
 		if (!isClientTaken(name)) {
-			clients.put(name, inetAddress);
-			System.out.println(String.format("New Client %s (%s)", name, inetAddress));
+			clients.put(connection, name);
+			System.out.println(String.format("New Client %s (%s)", name, connection.clientAddress()));
 			return true;
 		}
 		else {
 			return false;
 		}
 	}
+	
+	public void removeClient(Connection connection) {
+	    clients.remove(connection);
+	}
 
 	public boolean isClientTaken(String name) {
 		return clients.containsKey(name);
 	}
 
-	public Map<String, InetAddress> getClients() {
-		return new HashMap<String, InetAddress>(this.clients);
+	public Map<Connection, String> getClients() {
+		return new HashMap<Connection, String>(this.clients);
 	}
 }

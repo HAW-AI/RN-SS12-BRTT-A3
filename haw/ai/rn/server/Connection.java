@@ -32,7 +32,7 @@ public class Connection implements Runnable {
 					String name = msg.substring(4).trim();
 					if (name.matches(NAME_PATTERN)) {
 						synchronized ("add client") {
-							if (server.addClient(name, getSocket().getInetAddress())) {
+							if (server.addClient(name, this)) {
 								respond("OK");
 							}
 							else {
@@ -47,13 +47,13 @@ public class Connection implements Runnable {
 				else if (msg.toLowerCase().trim().startsWith("info")) {
 					// INFO        - Teilnehmerliste zurückschicken.
 					StringBuilder response = new StringBuilder();
-					Map<String, InetAddress> clients = server.getClients();
+					Map<Connection, String> clients = server.getClients();
 					response.append("LIST");
 					response.append(String.format(" %d", clients.size()));
-					for (Map.Entry<String, InetAddress> e : clients.entrySet()) {
-					    String ip = e.getValue().toString();
+					for (Map.Entry<Connection, String> e : clients.entrySet()) {
+					    String ip = e.getKey().clientAddress().toString();
 					    ip = ip.substring(ip.indexOf('/') + 1); // strip host name
-						response.append(String.format(" %s %s", ip, e.getKey()));
+						response.append(String.format(" %s %s", ip, e.getValue()));
 					}
 					respond(response.toString());
 				}
@@ -79,6 +79,7 @@ public class Connection implements Runnable {
 		}
 		try {
 			System.out.println(String.format("close connection for %s", socket.getInetAddress()));
+			server.removeClient(this);
 			socket.close();
 			socket = null;
 		} catch (IOException e) {
@@ -100,4 +101,39 @@ public class Connection implements Runnable {
 			e.printStackTrace();
 		}
 	}
+	
+	public InetAddress clientAddress() {
+	    return socket.getInetAddress();
+	}
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((server == null) ? 0 : server.hashCode());
+        result = prime * result + ((socket == null) ? 0 : socket.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Connection other = (Connection) obj;
+        if (server == null) {
+            if (other.server != null)
+                return false;
+        } else if (!server.equals(other.server))
+            return false;
+        if (socket == null) {
+            if (other.socket != null)
+                return false;
+        } else if (!socket.equals(other.socket))
+            return false;
+        return true;
+    }
 }
