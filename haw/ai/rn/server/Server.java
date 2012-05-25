@@ -34,8 +34,13 @@ public class Server {
 
 	public boolean addClient(String name, Connection connection) {
 		if (!isClientTaken(name)) {
-			clients.put(connection, name);
-			System.out.println(String.format("New Client %s (%s)", name, connection.clientAddress()));
+		    if (clients.containsKey(connection)) {
+                System.out.println(String.format("%s is now known as %s", clients.get(connection), name));
+		    } else {
+    			System.out.println(String.format("New Client %s (%s)", name, connection.clientAddress()));
+		    }
+
+            clients.put(connection, name);
 			return true;
 		}
 		else {
@@ -44,6 +49,7 @@ public class Server {
 	}
 	
 	public void removeClient(Connection connection) {
+        System.out.println(String.format("%s (%s) left", clients.get(connection), connection.clientAddress()));
 	    clients.remove(connection);
 	}
 
