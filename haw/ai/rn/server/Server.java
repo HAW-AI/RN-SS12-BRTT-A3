@@ -48,7 +48,7 @@ public class Server {
 	}
 
 	public boolean isClientTaken(String name) {
-		return clients.containsKey(name);
+		return clients.containsValue(name);
 	}
 
 	public Map<Connection, String> getClients() {
