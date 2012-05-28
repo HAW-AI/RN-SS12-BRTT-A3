@@ -11,7 +11,12 @@ public class Application {
         
         Controller controller = new Controller();
         controller.setView(new Chat());
-                
+        controller.run();
+        controller.connect("localhost", "Salz");
+        controller.sendMessage("hello");
+        controller.sendMessage("World!");
+        
+        /*
         try {
             InetAddress serverIp = InetAddress.getLocalHost();
 
@@ -41,6 +46,7 @@ public class Application {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        */
         
         System.out.println("Stopping client");
 

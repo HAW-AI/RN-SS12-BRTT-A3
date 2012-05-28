@@ -27,6 +27,7 @@ public class Chat {
 	private JTextField textMessage;
 	private JTextPane messages;
 	private JTextPane nicks;
+	private Controller controller;
 
 	/**
 	 * Launch the application.
@@ -114,6 +115,14 @@ public class Chat {
 		textMessage.setColumns(10);
 		
 		JButton btnSend = new JButton("send");
+		btnSend.setToolTipText("send message");
+		btnSend.setAction(new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Chat.this.controller.sendMessage(textMessage.getText());
+				textMessage.setText("");
+			}
+		});
 		panel.add(btnSend);
 		container.setDividerLocation(200);
 	}
@@ -122,5 +131,13 @@ public class Chat {
 	}
 	public JTextPane getNicks() {
 		return nicks;
+	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
+
+	public void setController(Controller controller) {
+		this.controller = controller;
 	}
 }
