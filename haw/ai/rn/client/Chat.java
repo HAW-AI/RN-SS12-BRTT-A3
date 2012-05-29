@@ -20,6 +20,8 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.Action;
 
 public class Chat {
@@ -141,6 +143,13 @@ public class Chat {
 		textMessage = new JTextField();
 		panel.add(textMessage);
 		textMessage.setColumns(10);
+		textMessage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                Chat.this.controller.sendMessage(textMessage.getText());
+                textMessage.setText("");
+            }
+        });
 		
 		JButton btnSend = new JButton("send");
 		btnSend.setToolTipText("send message");
