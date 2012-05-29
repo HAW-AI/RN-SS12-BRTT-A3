@@ -1,7 +1,6 @@
 package haw.ai.rn.client;
 
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.SpringLayout;
 import javax.swing.JScrollPane;
@@ -45,6 +44,11 @@ public class Chat {
 		});
 	}
 
+	public Chat(Controller controller) {
+		this.controller = controller;
+		initialize();
+	}
+	
 	/**
 	 * Create the application.
 	 */
@@ -68,6 +72,16 @@ public class Chat {
 		menuBar.add(mnFile);
 		
 		JMenuItem mntmConnectToServer = new JMenuItem("connect to server");
+		mntmConnectToServer.setAction(new AbstractAction() {	
+			{
+				putValue(NAME, "Connect to server");
+				putValue(SHORT_DESCRIPTION, "Some short description");
+			}
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Chat.this.connect("localhost", "Salz");
+			}
+		});
 		mnFile.add(mntmConnectToServer);
 		
 		JMenuItem menuItem = new JMenuItem("-");
@@ -75,6 +89,16 @@ public class Chat {
 		mnFile.add(menuItem);
 		
 		JMenuItem mntmClose = new JMenuItem("close");
+		mntmClose.setAction(new AbstractAction() {
+			{
+				putValue(NAME, "Close");
+				putValue(SHORT_DESCRIPTION, "close chat");
+			}
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Chat.this.controller.close();
+			}
+		});
 		mnFile.add(mntmClose);
 		SpringLayout springLayout = new SpringLayout();
 		frame.getContentPane().setLayout(springLayout);
@@ -117,6 +141,10 @@ public class Chat {
 		JButton btnSend = new JButton("send");
 		btnSend.setToolTipText("send message");
 		btnSend.setAction(new AbstractAction() {
+			{
+				putValue(NAME, "send");
+				putValue(SHORT_DESCRIPTION, "Send message");
+			}
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Chat.this.controller.sendMessage(textMessage.getText());
@@ -139,5 +167,9 @@ public class Chat {
 
 	public void setController(Controller controller) {
 		this.controller = controller;
+	}
+	
+	public void connect(String server, String name) {
+		this.controller.connect(server,name);
 	}
 }

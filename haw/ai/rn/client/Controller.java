@@ -15,9 +15,12 @@ public class Controller {
 			@Override
 			public void run() {
 				while(true) {
-					Controller.this.updateClients();
+					synchronized (Controller.this) {
+						Controller.this.updateClients();
+					}
+					System.out.println("Update Clients");
 					try {
-						Thread.sleep(5000);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -29,7 +32,6 @@ public class Controller {
 
 	public void setView(Chat view) {
 		this.view = view;
-		view.setController(this);
 	}
 	
 	public void connect(String server, String nick) {
