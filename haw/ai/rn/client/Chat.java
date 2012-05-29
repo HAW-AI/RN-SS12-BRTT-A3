@@ -9,6 +9,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JSplitPane;
 import java.awt.Color;
+
+import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
 import javax.swing.JDesktopPane;
 import javax.swing.JTextPane;
@@ -79,7 +81,9 @@ public class Chat {
 			}
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Chat.this.connect("localhost", "Salz");
+                String server = JOptionPane.showInputDialog("Server IP", "localhost");
+                String name = JOptionPane.showInputDialog("User Name");
+				Chat.this.connect(server, name);
 			}
 		});
 		mnFile.add(mntmConnectToServer);
