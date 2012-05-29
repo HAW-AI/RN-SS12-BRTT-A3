@@ -33,7 +33,7 @@ public class Client {
     public boolean setName(String name) {
         if (isValidName(name)) {
             this.name = name;
-            String resp = connection.request("new " + name);
+            String resp = connection.request("NEW " + name);
             return resp.equals("OK");
         } else {
             return false;
@@ -63,7 +63,7 @@ public class Client {
     Map<String, InetAddress> getClients() {
         Map<String, InetAddress> users = new HashMap<String, InetAddress>();
         
-        String resp = connection.request("info");
+        String resp = connection.request("INFO");
         boolean error = resp.startsWith("ERROR");
         
         if (!error) {
