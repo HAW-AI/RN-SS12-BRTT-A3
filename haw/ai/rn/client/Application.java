@@ -5,7 +5,8 @@ public class Application {
         System.out.println("Start client");
         
         final Controller controller = new Controller();
-        controller.setView(new Chat(controller));
+        final Chat chat = new Chat(controller);
+        controller.setView(chat);
         controller.run();
 
         System.out.println("Stopping client");
